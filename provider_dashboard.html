@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, Provider!</h1>
+        <p>View requests and upload completed work:</p>
+        <form id="uploadForm">
+            <label for="work">Upload PDF (Max 50 pages):</label>
+            <input type="file" id="work" accept=".pdf" required>
+            
+            <button type="submit">Upload</button>
+        </form>
+        <p>Your current star rating: <span id="starRating">0</span></p>
+        <button onclick="increaseStars()">Give Star</button>
+    </div>
+    <script>
+        let stars = 0;
+
+        function increaseStars() {
+            stars += 1;
+            document.getElementById("starRating").innerText = stars;
+
+            if (stars === 10) {
+                alert("Congratulations! You are now a 'Helper'.");
+            } else if (stars === 20) {
+                alert("Congratulations! You are now a 'Best Helper'.");
+            }
+        }
+        
+        document.getElementById("uploadForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            alert("PDF uploaded successfully!");
+        });
+    </script>
+</body>
+</html>

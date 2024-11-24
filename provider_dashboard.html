@@ -13,64 +13,77 @@
         <h2>Work Requests</h2>
         <ul id="workRequests"></ul>
 
+        <h2>Upload Work</h2>
+        <form id="uploadForm">
+            <label for="providerName">Your Name:</label>
+            <input type="text" id="providerName" required>
+
+            <label for="pdfFile">Upload PDF:</label>
+            <input type="file" id="pdfFile" accept=".pdf" required>
+
+            <button type="submit">Upload</button>
+        </form>
+
         <h2>Your Star Rating</h2>
-        <p>Name: <span id="providerName">Provider</span> <span id="helperTag"></span></p>
+        <p>Name: <span id="providerDisplayName">Provider</span> <span id="helperTag"></span></p>
         <p>Stars: <span id="starRating">0</span></p>
     </div>
     <script>
         let tasksCompleted = 0;
 
-        // Load user requests
+        // Use a simple in-memory approach to track tasks (no localStorage)
+        let userRequests = [
+            { name: "John Doe", subject: "Math", chapters: "Chapter 1", status: "Pending", providerName: null, pdfLink: null },
+            { name: "Jane Doe", subject: "Science", chapters: "Chapter 2", status: "Pending", providerName: null, pdfLink: null },
+        ];
+
+        // Display user requests
         function displayRequests() {
-            const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
             const requestList = document.getElementById("workRequests");
             requestList.innerHTML = "";
-
             userRequests.forEach((request, index) => {
                 if (request.status === "Pending") {
                     const listItem = document.createElement("li");
                     listItem.innerHTML = `
-                        <strong>${request.name}:</strong> ${request.subject} (${request.chapters})
-                        <button onclick="markAsCompleted(${index})">Complete Request</button>
+                        <strong>Request by:</strong> ${request.name} <br>
+                        <strong>Subject:</strong> ${request.subject} <br>
+                        <strong>Chapters:</strong> ${request.chapters} <br>
+                        <button onclick="completeRequest(${index})">Complete Request</button>
                     `;
                     requestList.appendChild(listItem);
                 }
             });
         }
 
-        // Mark request as completed
-        function markAsCompleted(index) {
-            const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
-            const request = userRequests[index];
+        // Complete request and upload PDF
+        function completeRequest(index) {
+            const providerName = document.getElementById("providerName").value;
+            const pdfFile = document.getElementById("pdfFile").files[0];
 
-            if (!request) {
-                alert("Invalid request.");
+            if (!pdfFile || !providerName) {
+                alert("Please enter your name and upload a PDF.");
                 return;
             }
 
-            const pdfLink = prompt("Provide the link to the completed PDF (or upload it to a cloud service first):");
-            if (!pdfLink) {
-                alert("No PDF link provided. Cannot mark as completed.");
-                return;
-            }
+            // Simulate uploading PDF (no actual file storage on GitHub Pages)
+            const pdfLink = URL.createObjectURL(pdfFile);
 
-            // Update request status
-            request.status = "Completed";
-            request.providerName = "Provider"; // Replace with actual provider's name
-            request.pdfLink = pdfLink;
-            localStorage.setItem("userRequests", JSON.stringify(userRequests));
+            // Mark request as completed
+            userRequests[index].status = "Completed";
+            userRequests[index].providerName = providerName;
+            userRequests[index].pdfLink = pdfLink;
 
             // Increment tasks completed and update stars
             tasksCompleted += 1;
             updateStars();
 
-            alert("Work request marked as completed!");
+            alert("Request completed successfully!");
             displayRequests();
         }
 
-        // Update stars and helper tag
+        // Update stars based on completed tasks
         function updateStars() {
-            const stars = Math.floor(tasksCompleted / 1); // 1 star per unique request
+            const stars = Math.floor(tasksCompleted / 1); // 1 star per unique upload
             document.getElementById("starRating").innerText = stars;
 
             if (stars >= 10) {

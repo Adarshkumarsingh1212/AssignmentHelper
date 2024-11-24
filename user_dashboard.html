@@ -10,6 +10,9 @@
     <div class="container">
         <h1>User Dashboard</h1>
         <form id="requestForm">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" required>
+
             <label for="subject">Subject:</label>
             <input type="text" id="subject" required>
 
@@ -18,18 +21,45 @@
 
             <button type="submit">Submit Request</button>
         </form>
+
+        <h2>Your Requests</h2>
+        <ul id="userRequests"></ul>
     </div>
     <script>
+        // Submit work request
         document.getElementById("requestForm").addEventListener("submit", function (e) {
             e.preventDefault();
+            const name = document.getElementById("name").value;
             const subject = document.getElementById("subject").value;
             const chapters = document.getElementById("chapters").value;
 
-            // Save the request to localStorage
-            localStorage.setItem("workRequest", JSON.stringify({ subject, chapters }));
+            // Retrieve existing requests from localStorage
+            let requests = JSON.parse(localStorage.getItem("userRequests")) || [];
+            requests.push({ name, subject, chapters, status: "Pending", providerName: null, pdfLink: null });
+            localStorage.setItem("userRequests", JSON.stringify(requests));
 
             alert("Work request submitted successfully!");
+            displayRequests();
         });
+
+        // Display requests
+        function displayRequests() {
+            const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
+            const requestList = document.getElementById("userRequests");
+            requestList.innerHTML = "";
+
+            userRequests.forEach((request, index) => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `
+                    <strong>Subject:</strong> ${request.subject} | <strong>Chapters:</strong> ${request.chapters} | 
+                    <strong>Status:</strong> ${request.status} 
+                    ${request.providerName ? `<br><strong>Provided by:</strong> ${request.providerName} (${request.pdfLink ? `<a href="${request.pdfLink}" target="_blank">View PDF</a>` : ""})` : ""}
+                `;
+                requestList.appendChild(listItem);
+            });
+        }
+
+        displayRequests(); // Load existing requests on page load
     </script>
 </body>
 </html>

@@ -3,82 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Provider Dashboard</title>
+    <title>User Dashboard</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Provider Dashboard</h1>
+        <h1>User Dashboard</h1>
+        <form id="requestForm">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" required>
 
-        <h2>Work Requests</h2>
-        <ul id="workRequests"></ul>
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" required>
 
-        <h2>Your Star Rating</h2>
-        <p>Name: <span id="providerName">Provider</span> <span id="helperTag"></span></p>
-        <p>Stars: <span id="starRating">0</span></p>
+            <label for="chapters">Chapters:</label>
+            <input type="text" id="chapters" required>
+
+            <button type="submit">Submit Request</button>
+        </form>
+
+        <h2>Your Requests</h2>
+        <ul id="userRequests"></ul>
     </div>
     <script>
-        let tasksCompleted = 0;
+        // Submit work request
+        document.getElementById("requestForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const name = document.getElementById("name").value;
+            const subject = document.getElementById("subject").value;
+            const chapters = document.getElementById("chapters").value;
 
-        // Load user requests
+            // Retrieve existing requests from localStorage
+            let requests = JSON.parse(localStorage.getItem("userRequests")) || [];
+            requests.push({ name, subject, chapters, status: "Pending", providerName: null, pdfLink: null });
+            localStorage.setItem("userRequests", JSON.stringify(requests));
+
+            alert("Work request submitted successfully!");
+            displayRequests();
+        });
+
+        // Display requests
         function displayRequests() {
             const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
-            const requestList = document.getElementById("workRequests");
+            const requestList = document.getElementById("userRequests");
             requestList.innerHTML = "";
 
-            userRequests.forEach((request, index) => {
-                if (request.status === "Pending") {
-                    const listItem = document.createElement("li");
-                    listItem.innerHTML = `
-                        <strong>${request.name}:</strong> ${request.subject} (${request.chapters})
-                        <button onclick="markAsCompleted(${index})">Complete Request</button>
-                    `;
-                    requestList.appendChild(listItem);
-                }
+            userRequests.forEach((request) => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `
+                    <strong>Subject:</strong> ${request.subject} | <strong>Chapters:</strong> ${request.chapters} | 
+                    <strong>Status:</strong> ${request.status} 
+                    ${request.providerName ? `<br><strong>Provided by:</strong> ${request.providerName} (${request.pdfLink ? `<a href="${request.pdfLink}" target="_blank">View PDF</a>` : ""})` : ""}
+                `;
+                requestList.appendChild(listItem);
             });
         }
 
-        // Mark request as completed
-        function markAsCompleted(index) {
-            const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
-            const request = userRequests[index];
-
-            if (!request) {
-                alert("Invalid request.");
-                return;
-            }
-
-            const pdfLink = prompt("Provide the link to the completed PDF (or upload it to a cloud service first):");
-            if (!pdfLink) {
-                alert("No PDF link provided. Cannot mark as completed.");
-                return;
-            }
-
-            // Update request status
-            request.status = "Completed";
-            request.providerName = "Provider"; // Replace with actual provider's name
-            request.pdfLink = pdfLink;
-            localStorage.setItem("userRequests", JSON.stringify(userRequests));
-
-            // Increment tasks completed and update stars
-            tasksCompleted += 1;
-            updateStars();
-
-            alert("Work request marked as completed!");
-            displayRequests();
-        }
-
-        // Update stars and helper tag
-        function updateStars() {
-            const stars = Math.floor(tasksCompleted / 1); // 1 star per unique request
-            document.getElementById("starRating").innerText = stars;
-
-            if (stars >= 10) {
-                document.getElementById("helperTag").innerText = " (Best Helper)";
-            }
-        }
-
-        displayRequests(); // Load requests on page load
+        displayRequests(); // Load existing requests on page load
     </script>
 </body>
 </html>

@@ -4,7 +4,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
     // Get form values
     const name = document.getElementById("name").value;
-    //const dob = document.getElementById("dob").value;
+    const dob = document.getElementById("dob").value;
     //const email = document.getElementById("email").value;
     const phone = document.getElementById("phone").value;
     const role = document.getElementById("role").value;

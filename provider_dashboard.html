@@ -15,8 +15,8 @@
 
         <h2>Upload Work</h2>
         <form id="uploadForm">
-            <label for="requestIndex">Request Index:</label>
-            <input type="number" id="requestIndex" required>
+            <label for="providerName">Your Name:</label>
+            <input type="text" id="providerName" required>
 
             <label for="pdfFile">Upload PDF:</label>
             <input type="file" id="pdfFile" accept=".pdf" required>
@@ -25,7 +25,7 @@
         </form>
 
         <h2>Your Star Rating</h2>
-        <p>Name: <span id="providerName">Provider</span> <span id="helperTag"></span></p>
+        <p>Name: <span id="providerDisplayName">Provider</span> <span id="helperTag"></span></p>
         <p>Stars: <span id="starRating">0</span></p>
     </div>
     <script>
@@ -41,46 +41,45 @@
                 if (request.status === "Pending") {
                     const listItem = document.createElement("li");
                     listItem.innerHTML = `
-                        <strong>Request ${index}:</strong> ${request.name} - ${request.subject} (${request.chapters})
+                        <strong>Request by:</strong> ${request.name} <br>
+                        <strong>Subject:</strong> ${request.subject} <br>
+                        <strong>Chapters:</strong> ${request.chapters} <br>
+                        <button onclick="completeRequest(${index})">Complete Request</button>
                     `;
                     requestList.appendChild(listItem);
                 }
             });
         }
 
-        // Upload PDF
-        document.getElementById("uploadForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const requestIndex = parseInt(document.getElementById("requestIndex").value);
+        // Complete request and upload PDF
+        function completeRequest(index) {
+            const providerName = document.getElementById("providerName").value;
             const pdfFile = document.getElementById("pdfFile").files[0];
 
-            if (!pdfFile) {
-                alert("Please upload a PDF.");
+            if (!pdfFile || !providerName) {
+                alert("Please enter your name and upload a PDF.");
                 return;
             }
 
             // Simulate uploading PDF
             const pdfLink = URL.createObjectURL(pdfFile);
 
-            // Update user request
+            // Retrieve existing requests from localStorage
             let userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
-            if (userRequests[requestIndex]) {
-                userRequests[requestIndex].status = "Completed";
-                userRequests[requestIndex].providerName = "Provider"; // Replace with actual provider name
-                userRequests[requestIndex].pdfLink = pdfLink;
+            if (userRequests[index]) {
+                userRequests[index].status = "Completed";
+                userRequests[index].providerName = providerName;
+                userRequests[index].pdfLink = pdfLink;
                 localStorage.setItem("userRequests", JSON.stringify(userRequests));
-            } else {
-                alert("Invalid request index.");
-                return;
             }
 
             // Increment tasks completed and update stars
             tasksCompleted += 1;
             updateStars();
 
-            alert("PDF uploaded successfully!");
+            alert("Request completed successfully!");
             displayRequests();
-        });
+        }
 
         function updateStars() {
             const stars = Math.floor(tasksCompleted / 1); // 1 star per unique upload

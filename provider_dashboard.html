@@ -10,57 +10,88 @@
     <div class="container">
         <h1>Provider Dashboard</h1>
 
-        <h2>Incoming Work Requests</h2>
+        <h2>Work Requests</h2>
         <ul id="workRequests"></ul>
 
         <h2>Upload Work</h2>
         <form id="uploadForm">
+            <label for="requestIndex">Request Index:</label>
+            <input type="number" id="requestIndex" required>
+
             <label for="pdfFile">Upload PDF:</label>
             <input type="file" id="pdfFile" accept=".pdf" required>
+
             <button type="submit">Upload</button>
         </form>
 
         <h2>Your Star Rating</h2>
+        <p>Name: <span id="providerName">Provider</span> <span id="helperTag"></span></p>
         <p>Stars: <span id="starRating">0</span></p>
     </div>
     <script>
-        // Retrieve work requests from localStorage
-        const requests = JSON.parse(localStorage.getItem("workRequest"));
-
-        if (requests) {
-            const requestList = document.getElementById("workRequests");
-            const listItem = document.createElement("li");
-            listItem.textContent = `Subject: ${requests.subject}, Chapters: ${requests.chapters}`;
-            requestList.appendChild(listItem);
-        }
-
-        // Star rating system
         let tasksCompleted = 0;
-        let stars = 0;
 
-        function updateStars() {
-            stars = Math.floor(tasksCompleted / 5); // 1 star for every 5 tasks
-            document.getElementById("starRating").innerText = stars;
+        // Load user requests
+        function displayRequests() {
+            const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
+            const requestList = document.getElementById("workRequests");
+            requestList.innerHTML = "";
 
-            if (stars === 10) {
-                alert("Congratulations! You are now a 'Helper'.");
-            } else if (stars === 20) {
-                alert("Congratulations! You are now a 'Best Helper'.");
-            }
+            userRequests.forEach((request, index) => {
+                if (request.status === "Pending") {
+                    const listItem = document.createElement("li");
+                    listItem.innerHTML = `
+                        <strong>Request ${index}:</strong> ${request.name} - ${request.subject} (${request.chapters})
+                    `;
+                    requestList.appendChild(listItem);
+                }
+            });
         }
 
+        // Upload PDF
         document.getElementById("uploadForm").addEventListener("submit", function (e) {
             e.preventDefault();
-            const fileInput = document.getElementById("pdfFile");
-            if (fileInput.files.length === 0) {
-                alert("Please upload a file.");
+            const requestIndex = parseInt(document.getElementById("requestIndex").value);
+            const pdfFile = document.getElementById("pdfFile").files[0];
+
+            if (!pdfFile) {
+                alert("Please upload a PDF.");
                 return;
             }
 
-            tasksCompleted += 1; // Increment tasks completed
-            updateStars(); // Recalculate stars
-            alert("PDF uploaded successfully! Total tasks completed: " + tasksCompleted);
+            // Simulate uploading PDF
+            const pdfLink = URL.createObjectURL(pdfFile);
+
+            // Update user request
+            let userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
+            if (userRequests[requestIndex]) {
+                userRequests[requestIndex].status = "Completed";
+                userRequests[requestIndex].providerName = "Provider"; // Replace with actual provider name
+                userRequests[requestIndex].pdfLink = pdfLink;
+                localStorage.setItem("userRequests", JSON.stringify(userRequests));
+            } else {
+                alert("Invalid request index.");
+                return;
+            }
+
+            // Increment tasks completed and update stars
+            tasksCompleted += 1;
+            updateStars();
+
+            alert("PDF uploaded successfully!");
+            displayRequests();
         });
+
+        function updateStars() {
+            const stars = Math.floor(tasksCompleted / 1); // 1 star per unique upload
+            document.getElementById("starRating").innerText = stars;
+
+            if (stars >= 10) {
+                document.getElementById("helperTag").innerText = " (Best Helper)";
+            }
+        }
+
+        displayRequests(); // Load requests on page load
     </script>
 </body>
 </html>

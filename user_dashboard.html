@@ -1,29 +1,33 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Welcome, User!</h1>
-        <p>You can request work here:</p>
+        <h1>User Dashboard</h1>
         <form id="requestForm">
             <label for="subject">Subject:</label>
             <input type="text" id="subject" required>
-            
-            <label for="section">Section:</label>
-            <input type="text" id="section" required>
-            
+
+            <label for="chapters">Chapters:</label>
+            <input type="text" id="chapters" required>
+
             <button type="submit">Submit Request</button>
         </form>
     </div>
     <script>
         document.getElementById("requestForm").addEventListener("submit", function (e) {
             e.preventDefault();
+            const subject = document.getElementById("subject").value;
+            const chapters = document.getElementById("chapters").value;
+
+            // Save the request to localStorage
+            localStorage.setItem("workRequest", JSON.stringify({ subject, chapters }));
+
             alert("Work request submitted successfully!");
         });
     </script>

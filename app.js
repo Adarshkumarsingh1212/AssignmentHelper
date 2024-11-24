@@ -10,7 +10,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     const role = document.getElementById("role").value;
 
     // Simulate OTP verification (placeholder)
-    alert("OTP sent to " + phone);
+    alert("TEAM ADARSH : LOGIN SUCCESFULLY FOR " + name);
 
     // Redirect based on role
     if (role === "user") {

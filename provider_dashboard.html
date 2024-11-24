@@ -13,19 +13,8 @@
         <h2>Work Requests</h2>
         <ul id="workRequests"></ul>
 
-        <h2>Upload Work</h2>
-        <form id="uploadForm">
-            <label for="providerName">Your Name:</label>
-            <input type="text" id="providerName" required>
-
-            <label for="pdfFile">Upload PDF:</label>
-            <input type="file" id="pdfFile" accept=".pdf" required>
-
-            <button type="submit">Upload</button>
-        </form>
-
         <h2>Your Star Rating</h2>
-        <p>Name: <span id="providerDisplayName">Provider</span> <span id="helperTag"></span></p>
+        <p>Name: <span id="providerName">Provider</span> <span id="helperTag"></span></p>
         <p>Stars: <span id="starRating">0</span></p>
     </div>
     <script>
@@ -41,48 +30,47 @@
                 if (request.status === "Pending") {
                     const listItem = document.createElement("li");
                     listItem.innerHTML = `
-                        <strong>Request by:</strong> ${request.name} <br>
-                        <strong>Subject:</strong> ${request.subject} <br>
-                        <strong>Chapters:</strong> ${request.chapters} <br>
-                        <button onclick="completeRequest(${index})">Complete Request</button>
+                        <strong>${request.name}:</strong> ${request.subject} (${request.chapters})
+                        <button onclick="markAsCompleted(${index})">Complete Request</button>
                     `;
                     requestList.appendChild(listItem);
                 }
             });
         }
 
-        // Complete request and upload PDF
-        function completeRequest(index) {
-            const providerName = document.getElementById("providerName").value;
-            const pdfFile = document.getElementById("pdfFile").files[0];
+        // Mark request as completed
+        function markAsCompleted(index) {
+            const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
+            const request = userRequests[index];
 
-            if (!pdfFile || !providerName) {
-                alert("Please enter your name and upload a PDF.");
+            if (!request) {
+                alert("Invalid request.");
                 return;
             }
 
-            // Simulate uploading PDF
-            const pdfLink = URL.createObjectURL(pdfFile);
-
-            // Retrieve existing requests from localStorage
-            let userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
-            if (userRequests[index]) {
-                userRequests[index].status = "Completed";
-                userRequests[index].providerName = providerName;
-                userRequests[index].pdfLink = pdfLink;
-                localStorage.setItem("userRequests", JSON.stringify(userRequests));
+            const pdfLink = prompt("Provide the link to the completed PDF (or upload it to a cloud service first):");
+            if (!pdfLink) {
+                alert("No PDF link provided. Cannot mark as completed.");
+                return;
             }
+
+            // Update request status
+            request.status = "Completed";
+            request.providerName = "Provider"; // Replace with actual provider's name
+            request.pdfLink = pdfLink;
+            localStorage.setItem("userRequests", JSON.stringify(userRequests));
 
             // Increment tasks completed and update stars
             tasksCompleted += 1;
             updateStars();
 
-            alert("Request completed successfully!");
+            alert("Work request marked as completed!");
             displayRequests();
         }
 
+        // Update stars and helper tag
         function updateStars() {
-            const stars = Math.floor(tasksCompleted / 1); // 1 star per unique upload
+            const stars = Math.floor(tasksCompleted / 1); // 1 star per unique request
             document.getElementById("starRating").innerText = stars;
 
             if (stars >= 10) {

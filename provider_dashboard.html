@@ -4,40 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Provider Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Provider Dashboard</h1>
+    <h1>Provider Dashboard</h1>
 
-        <h2>Work Requests</h2>
-        <ul id="workRequests"></ul>
+    <h2>Work Requests</h2>
+    <ul id="workRequests"></ul>
 
-        <h2>Upload Work</h2>
-        <form id="uploadForm">
-            <label for="providerName">Your Name:</label>
-            <input type="text" id="providerName" required>
+    <h2>Upload Work</h2>
+    <form id="uploadForm">
+        <label for="providerName">Your Name:</label>
+        <input type="text" id="providerName" required><br>
 
-            <label for="pdfFile">Upload PDF:</label>
-            <input type="file" id="pdfFile" accept=".pdf" required>
+        <label for="pdfFile">Upload PDF:</label>
+        <input type="file" id="pdfFile" accept=".pdf" required><br>
 
-            <button type="submit">Upload</button>
-        </form>
+        <button type="submit">Upload</button>
+    </form>
 
-        <h2>Your Star Rating</h2>
-        <p>Name: <span id="providerDisplayName">Provider</span> <span id="helperTag"></span></p>
-        <p>Stars: <span id="starRating">0</span></p>
-    </div>
+    <h2>Your Star Rating</h2>
+    <p>Name: <span id="providerDisplayName">Provider</span> <span id="helperTag"></span></p>
+    <p>Stars: <span id="starRating">0</span></p>
+
     <script>
-        let tasksCompleted = 0;
+        let tasksCompleted = localStorage.getItem("tasksCompleted") || 0;  // Load tasks from localStorage
+        const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
 
-        // Use a simple in-memory approach to track tasks (no localStorage)
-        let userRequests = [
-            { name: "John Doe", subject: "Math", chapters: "Chapter 1", status: "Pending", providerName: null, pdfLink: null },
-            { name: "Jane Doe", subject: "Science", chapters: "Chapter 2", status: "Pending", providerName: null, pdfLink: null },
-        ];
-
-        // Display user requests
+        // Display requests from the user
         function displayRequests() {
             const requestList = document.getElementById("workRequests");
             requestList.innerHTML = "";
@@ -65,25 +58,27 @@
                 return;
             }
 
-            // Simulate uploading PDF (no actual file storage on GitHub Pages)
             const pdfLink = URL.createObjectURL(pdfFile);
 
-            // Mark request as completed
+            // Mark request as completed and save data
             userRequests[index].status = "Completed";
             userRequests[index].providerName = providerName;
             userRequests[index].pdfLink = pdfLink;
 
-            // Increment tasks completed and update stars
             tasksCompleted += 1;
-            updateStars();
 
+            // Save to localStorage
+            localStorage.setItem("userRequests", JSON.stringify(userRequests));
+            localStorage.setItem("tasksCompleted", tasksCompleted);
+
+            updateStars();
             alert("Request completed successfully!");
             displayRequests();
         }
 
-        // Update stars based on completed tasks
+        // Update stars based on tasks completed
         function updateStars() {
-            const stars = Math.floor(tasksCompleted / 1); // 1 star per unique upload
+            const stars = Math.floor(tasksCompleted / 1);
             document.getElementById("starRating").innerText = stars;
 
             if (stars >= 10) {
@@ -91,7 +86,7 @@
             }
         }
 
-        displayRequests(); // Load requests on page load
+        displayRequests();  // Display requests on page load
     </script>
 </body>
 </html>

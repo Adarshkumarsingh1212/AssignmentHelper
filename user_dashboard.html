@@ -1,65 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Questro</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>User Dashboard</h1>
-        <form id="requestForm">
-            <label for="name">Your Name:</label>
-            <input type="text" id="name" required>
+  <header>
+    <h1>Welcome to Questro, [User's Name]!</h1>
+  </header>
+  
+  <main>
+    <section class="request-form">
+      <h2>Submit Your Request</h2>
+      <form id="userRequestForm">
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" placeholder="Enter subject" required>
 
-            <label for="subject">Subject:</label>
-            <input type="text" id="subject" required>
+        <label for="chapter">Chapter:</label>
+        <input type="text" id="chapter" placeholder="Enter chapter" required>
 
-            <label for="chapters">Chapters:</label>
-            <input type="text" id="chapters" required>
+        <label for="details">Specify Question/Details:</label>
+        <textarea id="details" placeholder="Provide more details"></textarea>
 
-            <button type="submit">Submit Request</button>
-        </form>
+        <button type="submit">Request Help</button>
+      </form>
+    </section>
 
-        <h2>Your Requests</h2>
-        <ul id="userRequests"></ul>
-    </div>
-    <script>
-        // Submit work request
-        document.getElementById("requestForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const name = document.getElementById("name").value;
-            const subject = document.getElementById("subject").value;
-            const chapters = document.getElementById("chapters").value;
+    <section class="requests">
+      <h2>Your Completed Requests</h2>
+      <div id="completedRequests">
+        <!-- Completed work will load dynamically here -->
+      </div>
+    </section>
 
-            // Retrieve existing requests from localStorage
-            let requests = JSON.parse(localStorage.getItem("userRequests")) || [];
-            requests.push({ name, subject, chapters, status: "Pending", providerName: null, pdfLink: null });
-            localStorage.setItem("userRequests", JSON.stringify(requests));
-
-            alert("Work request submitted successfully!");
-            displayRequests();
-        });
-
-        // Display requests
-        function displayRequests() {
-            const userRequests = JSON.parse(localStorage.getItem("userRequests")) || [];
-            const requestList = document.getElementById("userRequests");
-            requestList.innerHTML = "";
-
-            userRequests.forEach((request) => {
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `
-                    <strong>Subject:</strong> ${request.subject} | <strong>Chapters:</strong> ${request.chapters} | 
-                    <strong>Status:</strong> ${request.status} 
-                    ${request.providerName ? `<br><strong>Provided by:</strong> ${request.providerName} (${request.pdfLink ? `<a href="${request.pdfLink}" target="_blank">View PDF</a>` : ""})` : ""}
-                `;
-                requestList.appendChild(listItem);
-            });
-        }
-
-        displayRequests(); // Load existing requests on page load
-    </script>
+    <section class="specific-provider">
+      <h2>Ask a Specific Provider</h2>
+      <form id="specificProviderForm">
+        <label for="providerName">Provider's Name:</label>
+        <input type="text" id="providerName" placeholder="Enter provider's name" required>
+        <button type="submit">Request Provider</button>
+      </form>
+    </section>
+  </main>
 </body>
 </html>

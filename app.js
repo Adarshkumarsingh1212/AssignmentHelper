@@ -1,21 +1,14 @@
+// Firebase configuration (replace with your Firebase project details)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+};
 
-document.getElementById("loginForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    // Get form values
-    const name = document.getElementById("name").value;
-    const dob = document.getElementById("dob").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const role = document.getElementById("role").value;
-
-    // Simulate OTP verification (placeholder)
-    alert("TEAM ADARSH WELCOMES YOU : LOGIN SUCCESFULLY FOR " + name);
-
-    // Redirect based on role
-    if (role === "user") {
-        window.location.href = "user_dashboard.html";
-    } else if (role === "provider") {
-        window.location.href = "provider_dashboard.html";
-    }
-});
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();

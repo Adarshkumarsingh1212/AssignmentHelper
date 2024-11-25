@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provider Dashboard - Questro</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Welcome, Provider!</h1>
+  </header>
+  
+  <main>
+    <section class="pending-requests">
+      <h2>Pending Requests</h2>
+      <div id="pendingRequests">
+        <!-- User requests will load dynamically here -->
+      </div>
+    </section>
+
+    <section class="upload-work">
+      <h2>Upload Completed Work</h2>
+      <form id="uploadWorkForm">
+        <label for="requestId">Request ID:</label>
+        <input type="text" id="requestId" placeholder="Enter request ID" required>
+
+        <label for="workFile">Upload File (PDF or Images):</label>
+        <input type="file" id="workFile" multiple required>
+        
+        <button type="submit">Upload</button>
+      </form>
+    </section>
+
+    <section class="stars-system">
+      <h2>Your Star Rank</h2>
+      <p id="starRank">Stars Earned: <span>0</span></p>
+    </section>
+  </main>
+</body>
+</html>

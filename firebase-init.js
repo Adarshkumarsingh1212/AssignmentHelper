@@ -22,3 +22,11 @@
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
+
+  <!-- Link to your Firebase Initialization script -->
+  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-storage.js"></script>
+  <script src="firebase-init.js"></script> <!-- External JS file -->
+</head>
+<body>
